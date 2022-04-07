@@ -67,13 +67,9 @@ def print_board(board):
             else:
                 print(str(board[row][col]) + " ", end="")
 
-def main():
+
+def run():
     print_board(board)
     print()
     sudoku_solver(board)
     print_board(board)
-
-
-
-if __name__ == '__main__':
-    main()
