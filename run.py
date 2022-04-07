@@ -1,4 +1,4 @@
-from model import run
+from src.model import run
 
 def main():
     run()
