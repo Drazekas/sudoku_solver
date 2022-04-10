@@ -1,75 +1,53 @@
-board = [
-    [2,8,0,7,0,0,5,0,0],
-    [4,0,0,0,0,0,3,0,0],
-    [3,0,7,0,0,5,0,1,0],
-    [0,0,8,0,9,0,6,0,3],
-    [1,3,0,0,5,0,9,2,0],
-    [7,0,0,0,0,2,0,0,0],
-    [0,0,5,8,2,1,0,0,6],
-    [6,7,0,0,4,3,1,8,5],
-    [0,0,3,0,0,0,0,0,0]
-]
+from src.const import CONST
 
+class Model():
+    def find_empty_box(self, input_sudoku):
+        for row in range(CONST.SUDOKU_BOXES_NUM.value):
+            for col in range(CONST.SUDOKU_BOXES_NUM.value):
+                if input_sudoku[row][col] == 0:
+                    return (row, col)
+        return None
 
-
-def sudoku_solver(board):
-    empty_field = find_empty(board)
-    if not empty_field:
-        return True
-    row, col = empty_field
-    for number in range(1,10):
-        if valid_number(board, number, (row, col)):
-            board[row][col] = number
-            if sudoku_solver(board):
-                return True
-            board[row][col] = 0
-    return False
-
-def find_empty(board):
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            if board[row][col] == 0:
-                return (row, col)
-    return None
-
-def valid_number(board, num, pos):
-    # Check row
-    for col in range(len(board)):
-        if board[pos[0]][col] == num and pos[1] != col:
-            return False
-
-    # Check column    
-    for row in range(len(board)):
-        if board[row][pos[1]] == num and pos[0] != row:
-            return False  
-
-    # Check 3x3 cube
-    box_row, box_col = pos[0]//3*3, pos[1]//3*3
-    for row in range(box_row, box_row+3):
-        for col in range(box_col, box_col+3):
-            if board[row][col] == num and pos != (row,col):
+    def valid_number(self, input_sudoku, num, pos):
+        # Check if the number is correct within the position.
+        # Check row
+        for col in range(CONST.SUDOKU_BOXES_NUM.value):
+            if input_sudoku[pos[0]][col] == num and pos[1] != col:
                 return False
-    
-    # return True if every condition is true
-    return True
+        # Check column    
+        for row in range(CONST.SUDOKU_BOXES_NUM.value):
+            if input_sudoku[row][pos[1]] == num and pos[0] != row:
+                return False  
+        # Check 3x3 square
+        square_first_row, square_first_col = pos[0]//3*3, pos[1]//3*3
+        for row in range(square_first_row, square_first_row+3):
+            for col in range(square_first_col, square_first_col+3):
+                if input_sudoku[row][col] == num and pos != (row,col):
+                    return False
+        # return True if every condition is true
+        return True
 
-def print_board(board):
-    for row in range(len(board)):
-        if row % 3 == 0 and row != 0:
-            print("- - - - - - - - - - - - - ")
+    def sudoku_first_check(self, input_sudoku):
+        # Check if provided sudoku is correct
+        for row in range(CONST.SUDOKU_BOXES_NUM.value):
+            for col in range(CONST.SUDOKU_BOXES_NUM.value):
+                if input_sudoku[row][col] != 0:
+                    if not self.valid_number(input_sudoku, 
+                                             input_sudoku[row][col], 
+                                             (row,col)):
+                        return False
+        return True
 
-        for col in range(len(board[0])):
-            if col % 3 == 0 and col != 0:
-                print(" | ", end="")
-
-            if col == 8:
-                print(board[row][col])
-            else:
-                print(str(board[row][col]) + " ", end="")
-
-
-def run():
-    print_board(board)
-    print()
-    sudoku_solver(board)
-    print_board(board)
+    def sudoku_solver(self, input_sudoku):
+        # Solve sudoku with a recursion backtracking algorithm
+        empty_box = self.find_empty_box(input_sudoku)
+        if not empty_box:
+            return True
+        row, col = empty_box
+        for number in range(1,10):
+            if self.valid_number(input_sudoku, number, (row, col)):
+                input_sudoku[row][col] = number
+                if self.sudoku_solver(input_sudoku):
+                    return True
+                input_sudoku[row][col] = 0
+        return False        
