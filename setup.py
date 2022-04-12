@@ -2,9 +2,10 @@ from setuptools import setup
 
 setup(
     name = 'Sudoku solver',
-    version = '0.1',
+    version = '1.0',
     author = 'Dawid Drążewski',
     license = 'MIT',
     package_dir = {'': 'src'},
-    py_modules = ['controller', 'interface', 'model']
+    py_modules = ['controller', 'interface', 'model'],
+    install_requires=[]
 )
