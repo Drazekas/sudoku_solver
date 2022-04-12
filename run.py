@@ -3,7 +3,7 @@ from src.model import Model
 from src.interface import Interface
 
 
-def main():
+def main() -> None:
     app = Controller(Model(), Interface())
     app.start_app()
 

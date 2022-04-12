@@ -3,10 +3,10 @@ from tkinter import messagebox, Grid
 from src.const import CONST
 
 class Interface():
-    def start_main_loop(self):
+    def start_main_loop(self) -> None:
         self.root.mainloop()
 
-    def setup(self, controller):
+    def setup(self, controller) -> None:
         self.controller = controller
         # Initialize Tkinter components
         self.main_window_init()
@@ -17,7 +17,7 @@ class Interface():
         self.grid_configurate()
         self.arrow_movement()
         
-    def main_window_init(self):
+    def main_window_init(self) -> None:
         # Initialize Tkinter window
         self.root = tk.Tk()
         self.root.title('Sudoku solver')
@@ -33,8 +33,8 @@ class Interface():
         self.root.geometry(f'{self.window_width}x{self.window_height}+{self.x_coord}+{self.y_coord}')
         self.root.configure(background='black')
 
-    def create_sudoku_boxes(self):
-        self.sudoku_entrytk = [[] for _ in range(CONST.SUDOKU_BOXES_NUM.value)]
+    def create_sudoku_boxes(self) -> None:
+        self.sudoku_entrytk: list[list[tk.Entry]] = [[] for _ in range(CONST.SUDOKU_BOXES_NUM.value)]
         self.vcmd = (self.root.register(self.controller.box_entry_validate), '%S')
         for row in range(CONST.SUDOKU_BOXES_NUM.value):
             for col in range(CONST.SUDOKU_BOXES_NUM.value):
@@ -49,7 +49,7 @@ class Interface():
                                 sticky='nsew')
                 self.sudoku_entrytk[row].append(self.box_entry)
 
-    def create_solve_button(self):
+    def create_solve_button(self) -> None:
         self.solve_button = tk.Button(self.root, height=3, text='Solve!', 
                                     command=lambda: self.controller.solve_button_func(self.sudoku_entrytk),
                                     font=("Helvetica", self.font_size))
@@ -57,7 +57,7 @@ class Interface():
                             columnspan=CONST.SUDOKU_BOXES_NUM.value//2+1,
                             sticky='nsew')
 
-    def create_reset_button(self):
+    def create_reset_button(self) -> None:
         self.reset_button = tk.Button(self.root, height=3, text='Reset!', 
                                 command=self.clear_sudoku_boxes,
                                 font=("Helvetica", self.font_size))
@@ -66,31 +66,31 @@ class Interface():
                          columnspan=CONST.SUDOKU_BOXES_NUM.value//2, 
                          sticky='nsew')
 
-    def show_sudoku_solution(self, sudoku_solution):
+    def show_sudoku_solution(self, sudoku_solution: list[list[int]]) -> None:
         for i, boxes_entry_row in enumerate(self.sudoku_entrytk):
             for j, box_entry in enumerate(boxes_entry_row):
                 box_entry.delete(0, tk.END)
                 box_entry.insert(0, sudoku_solution[i][j])
 
-    def freeze_sudoku(self):
+    def freeze_sudoku(self) -> None:
         self.solve_button.config(state=tk.DISABLED)
         for boxes_entry_row in self.sudoku_entrytk:
             for box_entry in boxes_entry_row:
                 box_entry.config(state='disabled')
 
-    def clear_sudoku_boxes(self):
+    def clear_sudoku_boxes(self) -> None:
         self.solve_button.config(state=tk.NORMAL)
         for boxes_entry_row in self.sudoku_entrytk:
             for box_entry in boxes_entry_row:
                 box_entry.config(state='normal')
                 box_entry.delete(0, tk.END)
 
-    def grid_configurate(self):
+    def grid_configurate(self) -> None:
         for x in range(CONST.SUDOKU_BOXES_NUM.value):
             Grid.columnconfigure(self.root, index=x, weight=1)
             Grid.rowconfigure(self.root, index=x, weight=1)        
             
-    def arrow_movement(self):
+    def arrow_movement(self) -> None:
         self.sudoku_entrytk[0][0].focus()
         for row in range(CONST.SUDOKU_BOXES_NUM.value):
             for col in range(CONST.SUDOKU_BOXES_NUM.value):
@@ -115,33 +115,33 @@ class Interface():
                     self.sudoku_entrytk[row][col].bind('<Up>', lambda e, y=row, x=col: self.sudoku_entrytk[y-1][x].focus())
                     self.sudoku_entrytk[row][col].bind('<Down>', lambda e, y=row, x=col: self.sudoku_entrytk[y+1][x].focus())   
 
-    def on_resize_window(self):
+    def on_resize_window(self) -> None:
         # Tkinter window components resize properties
-        self.resize_win_comp_step = 40
-        self.font_size = self.window_height//self.resize_win_comp_step
+        self.resize_win_comp_step: int = 40
+        self.font_size: int = self.window_height//self.resize_win_comp_step
         self.root.bind('<Configure>', lambda e: self.on_resize_window_func())
 
-    def on_resize_window_func(self):
+    def on_resize_window_func(self) -> None:
         if self.font_size == self.root.winfo_height()//self.resize_win_comp_step:
             return           
-        self.font_size = self.root.winfo_height()//self.resize_win_comp_step
+        self.font_size: int = self.root.winfo_height()//self.resize_win_comp_step
         self.resize_boxes_text()
         self.resize_solve_button_text()
         self.resize_reset_button_text()
 
-    def resize_boxes_text(self):
-        self.box_font_size = self.font_size*2
+    def resize_boxes_text(self) -> None:
+        self.box_font_size: int = self.font_size*2
         for boxes_entry_row in self.sudoku_entrytk:
             for box_entry in boxes_entry_row:
                 box_entry.config(font=('Ubuntu', self.box_font_size))
 
-    def resize_solve_button_text(self):
+    def resize_solve_button_text(self) -> None:
         self.solve_button.config(font=("Helvetica", self.font_size))
 
-    def resize_reset_button_text(self):
+    def resize_reset_button_text(self) -> None:
         self.reset_button.config(font=("Helvetica", self.font_size))
 
-    def show_error(self, error):
+    def show_error(self, error: str) -> None:
         if error == 'wrong_number':
             messagebox.showerror('error', 'Enter numbers only from 1 to 9!')
         elif error == 'sudoku_issue':
