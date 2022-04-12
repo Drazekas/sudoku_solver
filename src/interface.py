@@ -73,11 +73,13 @@ class Interface():
                 box_entry.insert(0, sudoku_solution[i][j])
 
     def freeze_sudoku(self):
+        self.solve_button.config(state=tk.DISABLED)
         for boxes_entry_row in self.sudoku_entrytk:
             for box_entry in boxes_entry_row:
                 box_entry.config(state='disabled')
 
     def clear_sudoku_boxes(self):
+        self.solve_button.config(state=tk.NORMAL)
         for boxes_entry_row in self.sudoku_entrytk:
             for box_entry in boxes_entry_row:
                 box_entry.config(state='normal')
